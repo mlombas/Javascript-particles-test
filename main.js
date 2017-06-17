@@ -2,29 +2,34 @@
 var canvas;
 var mouse, mouseIsDown;
 var force, resistance; //resistance in % of movement
-var maxParticles = 5, particles = [maxParticles]; //particles is an array
+var maxParticles = 1000, particles = [maxParticles]; //particles is an array
 //End of variable declarations
 //Classes definitions
 class particle {
 	constructor(x,y) {
-	this.radius = 0.3;
-	this.pos = new vec(x, y);
-	this.f = new vec(0,0); 
+		this.radius = 0.5;
+		this.pos = new vec(x, y);
+		this.f = new vec(0,0); 
 	}
 	draw(g) {
 		g.fillStyle = "#c47a35";
 		g.fillRect(this.pos.x - this.radius, this.pos.y - this.radius,2 * this.radius, 2 * this.radius);
 	}
 	update(mousePos) {
-		if(!mouseIsDown) return;
-		var toMouse = new vec(mousePos.x - this.pos.x, mousePos.y - this.pos.y);		
-		toMouse.normalize();
-		this.f.x += toMouse.x * force - this.f.x * resistance;
-		this.f.y += toMouse.y * force - this.f.y * resistance;
+		if(mouseIsDown){
+			var toMouse = new vec(mousePos.x - this.pos.x, mousePos.y - this.pos.y);	
+			toMouse.normalize();	
+			this.f.x += toMouse.x * force;
+			this.f.y += toMouse.y * force;
+		}
+		this.f.x -= this.f.x * resistance;
+		this.f.y -= this.f.y * resistance;
 		if(this.pos.x + this.f.x + this.radius > canvas.width || this.pos.x + this.f.x - this.radius < 0)
 			this.f.x = -this.f.x;
 		if(this.pos.y + this.f.y + this.radius > canvas.height || this.pos.y + this.f.y - this.radius < 0)
 			this.f.y = -this.f.y;
+		this.pos.x += this.f.x;
+		this.pos.y += this.f.y;
 	}
 }
 
@@ -33,7 +38,7 @@ class vec {
 		this.x = x;
 		this.y = y;
 	}
-	length(){ Math.sqrt(this.x * this.x + this.y * this.y); }
+	length(){ return Math.sqrt(this.x * this.x + this.y * this.y); }
 	normalize(){
 		this.x /= this.length();
 		this.y /= this.length();
@@ -44,7 +49,7 @@ class vec {
 function start() {
 	canvas = document.getElementById("particleField"), gfx = canvas.getContext("2d");
 	force = 1;
-	resistance = 0.3;
+	resistance = 0.08;
 	mouse = new vec(0,0);
 	mouseIsDown = false;
 	canvas.onmousedown = function(e){mouseIsDown = true; mouse = getMousePos(canvas, e)};
@@ -66,8 +71,6 @@ function update() {
 function draw() {
 	gfx.clearRect(0,0,canvas.width,canvas.height);
 	for(var i = 0; i < maxParticles; i++) particles[i].draw(gfx);
-	gfx.fillStyle = "#FFFFFF";
-	gfx.fillRect(mouse.x,mouse.y,1,1);
 }
 
 function  getMousePos(canvas, evt) {
