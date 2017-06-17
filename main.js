@@ -2,7 +2,8 @@
 var canvas;
 var mouse, mouseIsDown;
 var force, resistance; //resistance in % of movement
-var maxParticles = 1000, particles = [maxParticles]; //particles is an array
+var maxParticles, particles; //particles is an array
+var loop;
 //End of variable declarations
 //Classes definitions
 class particle {
@@ -46,17 +47,25 @@ class vec {
 }
 //End of classes definitions
 
+function reset() {
+	clearInterval(loop);
+	console.log("reseting");
+	force = document.getElementById("force").value;
+	resistance = document.getElementById("resistance").value;
+	maxParticles = document.getElementById("particles").value;
+	particles = [maxParticles];
+	for(var i = 0; i < maxParticles; i++) particles[i] = new particle(Math.random() * (canvas.width - 1), Math.random() * (canvas.height - 1));
+	loop = setInterval(mainLoop, 16);
+}
+
 function start() {
 	canvas = document.getElementById("particleField"), gfx = canvas.getContext("2d");
-	force = 1;
-	resistance = 0.08;
 	mouse = new vec(0,0);
 	mouseIsDown = false;
 	canvas.onmousedown = function(e){mouseIsDown = true; mouse = getMousePos(canvas, e)};
 	canvas.onmouseup = function(e){mouseIsDown = false};
 	canvas.onmousemove = function(e){if(mouseIsDown) {mouse = getMousePos(canvas, e)} };
-	for(var i = 0; i < maxParticles; i++) particles[i] = new particle(Math.random() * (canvas.width - 1), Math.random() * (canvas.height - 1));
-	var loop = setInterval(mainLoop, 16);
+	reset();
 }
 
 function mainLoop() {
