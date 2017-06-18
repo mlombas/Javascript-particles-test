@@ -18,9 +18,9 @@ class particle {
 		g.fillRect(this.pos.x - this.radius, this.pos.y - this.radius,2 * this.radius, 2 * this.radius);
 	}
 	update(mousePos, force, resistance) {
-		var toMouse = new vec(mousePos.x - this.pos.x, mousePos.y - this.pos.y);	
 		if(mouseIsDown){
-			toMouse.normalize();	
+			var toMouse = new vec(mousePos.x - this.pos.x, mousePos.y - this.pos.y);	
+			toMouse.normalize();
 			this.v.x += toMouse.x * force;
 			this.v.y += toMouse.y * force; 
 		}
@@ -42,8 +42,9 @@ class vec {
 	}
 	length(){ return Math.sqrt(this.x * this.x + this.y * this.y); }
 	normalize(){
-		this.x /= this.length();
-		this.y /= this.length();
+		var length = this.length();
+		this.x /= length;
+		this.y /= length;
 	}
 }
 //End of classes definitions
