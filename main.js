@@ -1,19 +1,20 @@
 //Variable declarations
 var canvas;
 var mouse, mouseIsDown;
-var force, resistance, particleRadius; //resistance in % of movement
+var force, resistance, particleRadius, particleColor; //resistance in % of movement
 var maxParticles, particles; //particles is an array
 var loop;
 //End of variable declarations
 //Classes definitions
 class particle {
-	constructor(x, y, r) {
+	constructor(x, y, r, color) {
+		this.color = color;
 		this.radius = r;
 		this.pos = new vec(x, y);
 		this.f = new vec(0,0); 
 	}
 	draw(g) {
-		g.fillStyle = "#c47a35";
+		g.fillStyle = this.color;
 		g.fillRect(this.pos.x - this.radius, this.pos.y - this.radius,2 * this.radius, 2 * this.radius);
 	}
 	update(mousePos, force, resistance) {
@@ -25,9 +26,9 @@ class particle {
 		}
 		this.f.x -= this.f.x * resistance;
 		this.f.y -= this.f.y * resistance;
-		if(this.pos.x + this.f.x + this.radius > canvas.width || this.pos.x + this.f.x - this.radius < 0)
+		if(this.pos.x + this.f.x + this.radius * 2 > canvas.width || this.pos.x + this.f.x - this.radius < 0)
 			this.f.x = -this.f.x;
-		if(this.pos.y + this.f.y + this.radius > canvas.height || this.pos.y + this.f.y - this.radius < 0)
+		if(this.pos.y + this.f.y + this.radius * 2 > canvas.height || this.pos.y + this.f.y - this.radius < 0)
 			this.f.y = -this.f.y;
 		this.pos.x += this.f.x;
 		this.pos.y += this.f.y;
@@ -52,10 +53,11 @@ function reset() {
 	console.log("reseting");
 	force = document.getElementById("force").value;
 	resistance = document.getElementById("resistance").value;
-	maxParticles = document.getElementById("particles").value;
-	particleRadius = document.getElementById("particleRadius").value
+	maxParticles = document.getElementById("numOfParticles").value;
+	particleRadius = document.getElementById("particleRadius").value;
+	particleColor = document.getElementById("particleColor").value;
 	particles = [maxParticles];
-	for(var i = 0; i < maxParticles; i++) particles[i] = new particle(Math.random() * (canvas.width - 1), Math.random() * (canvas.height - 1), particleRadius);
+	for(var i = 0; i < maxParticles; i++) particles[i] = new particle(Math.random() * (canvas.width - 1), Math.random() * (canvas.height - 1), particleRadius, particleColor);
 	loop = setInterval(mainLoop, 16);
 }
 
