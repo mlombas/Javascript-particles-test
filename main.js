@@ -11,27 +11,27 @@ class particle {
 		this.color = color;
 		this.radius = r;
 		this.pos = new vec(x, y);
-		this.f = new vec(0,0); 
+		this.v = new vec(0,0); 
 	}
 	draw(g) {
 		g.fillStyle = this.color;
 		g.fillRect(this.pos.x - this.radius, this.pos.y - this.radius,2 * this.radius, 2 * this.radius);
 	}
 	update(mousePos, force, resistance) {
+		var toMouse = new vec(mousePos.x - this.pos.x, mousePos.y - this.pos.y);	
 		if(mouseIsDown){
-			var toMouse = new vec(mousePos.x - this.pos.x, mousePos.y - this.pos.y);	
 			toMouse.normalize();	
-			this.f.x += toMouse.x * force;
-			this.f.y += toMouse.y * force;
+			this.v.x += toMouse.x * force;
+			this.v.y += toMouse.y * force; 
 		}
-		this.f.x -= this.f.x * resistance;
-		this.f.y -= this.f.y * resistance;
-		if(this.pos.x + this.f.x + this.radius * 2 > canvas.width || this.pos.x + this.f.x - this.radius < 0)
-			this.f.x = -this.f.x;
-		if(this.pos.y + this.f.y + this.radius * 2 > canvas.height || this.pos.y + this.f.y - this.radius < 0)
-			this.f.y = -this.f.y;
-		this.pos.x += this.f.x;
-		this.pos.y += this.f.y;
+		this.v.x -= this.v.x * resistance;
+		this.v.y -= this.v.y * resistance;
+		if(this.pos.x + this.v.x + this.radius * 2 > canvas.width || this.pos.x + this.v.x - this.radius < 0)
+			this.v.x = -this.v.x;
+		if(this.pos.y + this.v.y + this.radius * 2 > canvas.height || this.pos.y + this.v.y - this.radius < 0)
+			this.v.y = -this.v.y;
+		this.pos.x += this.v.x;
+		this.pos.y += this.v.y;
 	}
 }
 
